@@ -16,7 +16,25 @@ jobs:
         run: npm install
 
       - name: Generate dependency tree
-        run: npx depview --output dependency-tree.json
+        run: |
+          npm list --json --all > npm-tree.json || true
+          node -e "
+          const fs = require('fs');
+          let data;
+          try {
+            data = JSON.parse(fs.readFileSync('npm-tree.json', 'utf8'));
+          } catch (e) {
+            data = { name: 'unknown', version: '0.0.0', dependencies: {} };
+          }
+          const transform = (name, dep) => ({
+            groupId: name.includes('/') ? name.split('/')[0] : 'npm',
+            artifactId: name.includes('/') ? name.split('/')[1] : name,
+            version: dep.version || '0.0.0',
+            children: Object.entries(dep.dependencies || {}).map(([n, d]) => transform(n, d))
+          });
+          const result = transform(data.name, data);
+          fs.writeFileSync('dependency-tree.json', JSON.stringify(result, null, 2));
+          "
 
       - name: Upload dependency tree artifact
         uses: actions/upload-artifact@v4
