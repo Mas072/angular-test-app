@@ -1,0 +1,26 @@
+name: Generate Node Dependency Tree
+on: workflow_dispatch
+jobs:
+  generate-dependency-tree:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '16'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Generate dependency tree
+        run: npx depview --output dependency-tree.json
+
+      - name: Upload dependency tree artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: dependency-tree
+          path: dependency-tree.json
+          if-no-files-found: error
