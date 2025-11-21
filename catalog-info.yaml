@@ -1,0 +1,12 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: angular-test-app
+  description: Angular test app for dependency viewer
+  annotations:
+    github.com/project-slug: Mas072/angular-test-app
+    backstage.io/source-location: url:https://github.com/Mas072/angular-test-app
+spec:
+  type: website
+  lifecycle: experimental
+  owner: user:default/Mas072
